@@ -20,7 +20,7 @@ In addition, this project will include:
 
 ### Wireframes
 
-This app will consist of a single screen with the looper visualization, an options panel, nav links to the Github and my LinkedIn.  Looper controls will include a number-of-bars options input, a tempo selector input, Pause/Play and Reset buttons, and an input for tempo.
+This app will consist of a single screen with a looper visualization, an options panel, nav links to the Github and my LinkedIn.  Looper controls will include a number-of-bars options input, a tempo selector input, Pause/Play and Reset buttons, and an input for tempo.
 
 ![wireframes](./docs/orbital.jpg)
 
