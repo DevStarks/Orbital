@@ -1,0 +1,40 @@
+h1, body, canvas {
+  margin: 0;
+    border: 0;
+    outline: 0;
+    padding: 0;
+
+    text-decoration: inherit;
+    box-sizing: inherit;
+    vertical-align: inherit;
+    text-align: inherit;
+    color: inherit;
+    font: inherit;
+
+    background: transparent;
+}
+
+body {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: black;
+  font-family: 'Audiowide', cursive;
+
+}
+
+canvas {
+  display: block;
+  margin: auto auto;
+  /*background-color: #3c3c3c;*/
+}
+
+h1 {
+  color: DeepSkyBlue;
+  text-align: center;
+  font-size: 90px;
+  letter-spacing: 5px;
+}
