@@ -2,7 +2,7 @@
 
 ### About
 
-Orbital is a musical instrument for the browser. It works by looping 2, 4, or 8 measures and adding new notes to the loop as the user inputs them. Each tone has a orbital path which it follows and only produces sound when it reaches a full revolution.
+Orbital is a solar-system inspired musical instrument for the browser. It works by looping 2, 4, or 8 measures and placing new notes, represented by planets, in orbit as the user inputs them. Each tone has its own orbital path and triggers a synth sound when it reaches its point of origin.
 
 ### Functionality & MVP  
 
