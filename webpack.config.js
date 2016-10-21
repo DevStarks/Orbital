@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   context: __dirname,
-  entry: "./lib/orbital.jsx",
+  entry: "./lib/orbital.js",
   output: {
     filename: "bundle.js"
   },
