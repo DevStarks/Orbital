@@ -67,14 +67,14 @@
 	
 	  display.drawOrbits();
 	
-	  display.drawPlanets();
+	  // createjs.Ticker.addEventListener("tick", stage.update());
 	
 	  stage.update();
 	});
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
@@ -86,18 +86,26 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var _require = __webpack_require__(2);
+	
+	var Planet = _require.Planet;
+	
 	var CENTER_X = 365,
 	    CENTER_Y = 365;
 	
 	var OrbitRing = exports.OrbitRing = function () {
-	  function OrbitRing(stage, radius, color) {
+	  function OrbitRing(_ref) {
+	    var stage = _ref.stage;
+	    var radius = _ref.radius;
+	    var color = _ref.color;
+	
 	    _classCallCheck(this, OrbitRing);
 	
 	    this.stage = stage;
+	    this.color = color;
 	    this.x = CENTER_X;
 	    this.y = CENTER_Y;
 	    this.radius = radius;
-	    this.button = new OrbitButton(stage, radius, color);
 	  }
 	
 	  _createClass(OrbitRing, [{
@@ -105,8 +113,27 @@
 	    value: function draw() {
 	      var ring = new createjs.Shape();
 	      ring.graphics.setStrokeStyle(2).beginStroke("DeepSkyBlue").drawCircle(this.x, this.y, this.radius);
-	
 	      this.stage.addChild(ring);
+	      this.createButton();
+	      this.rotatePlanets();
+	    }
+	  }, {
+	    key: "rotatePlanets",
+	    value: function rotatePlanets() {
+	      var _this = this;
+	
+	      createjs.Ticker.addEventListener("tick", function () {
+	        return _this.stage.update();
+	      });
+	    }
+	  }, {
+	    key: "createButton",
+	    value: function createButton() {
+	      this.button = new OrbitButton({
+	        stage: this.stage,
+	        ringRadius: this.radius,
+	        color: this.color
+	      });
 	      this.button.draw();
 	    }
 	  }]);
@@ -115,7 +142,11 @@
 	}();
 	
 	var OrbitButton = exports.OrbitButton = function () {
-	  function OrbitButton(stage, ringRadius, color) {
+	  function OrbitButton(_ref2) {
+	    var stage = _ref2.stage;
+	    var ringRadius = _ref2.ringRadius;
+	    var color = _ref2.color;
+	
 	    _classCallCheck(this, OrbitButton);
 	
 	    this.stage = stage;
@@ -128,9 +159,31 @@
 	  _createClass(OrbitButton, [{
 	    key: "draw",
 	    value: function draw() {
-	      var button = new createjs.Shape();
-	      button.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ringX, this.ringY + this.ringRadius, 22);
-	      this.stage.addChild(button);
+	      var _this2 = this;
+	
+	      this.createButton();
+	      this.buttonShape.on('click', function () {
+	        _this2.createPlanet();
+	      });
+	    }
+	  }, {
+	    key: "createButton",
+	    value: function createButton() {
+	      this.buttonShape = new createjs.Shape();
+	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ringX, this.ringY + this.ringRadius, 22);
+	      this.stage.addChild(this.buttonShape);
+	    }
+	  }, {
+	    key: "createPlanet",
+	    value: function createPlanet() {
+	      var planet = new Planet({
+	        stage: this.stage,
+	        ringX: this.ringX,
+	        ringY: this.ringY,
+	        ringRadius: this.ringRadius,
+	        color: this.color
+	      });
+	      planet.draw();
 	    }
 	  }]);
 
@@ -152,10 +205,19 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Planet = exports.Planet = function () {
-	  function Planet(stage, color) {
+	  function Planet(_ref) {
+	    var stage = _ref.stage;
+	    var ringX = _ref.ringX;
+	    var ringY = _ref.ringY;
+	    var ringRadius = _ref.ringRadius;
+	    var color = _ref.color;
+	
 	    _classCallCheck(this, Planet);
 	
 	    this.stage = stage;
+	    this.ringX = ringX;
+	    this.ringY = ringY;
+	    this.ringRadius = ringRadius;
 	    this.color = color;
 	  }
 	
@@ -164,20 +226,18 @@
 	    value: function draw() {
 	      var _this = this;
 	
-	      var ringRadius = 90;
 	      var planet = new createjs.Shape();
-	      planet.graphics.beginFill("white").drawCircle(0, 0, 5);
+	      planet.graphics.beginFill(this.color).drawCircle(0, 0, 7);
+	
 	      this.stage.addChild(planet);
 	
 	      var angle = 1.57;
 	      var rotate = function rotate() {
 	        requestAnimationFrame(rotate);
 	
-	        planet.x = 365 + Math.cos(angle) * ringRadius;
-	        planet.y = 365 + Math.sin(angle) * ringRadius;
+	        planet.x = 365 + Math.cos(angle) * _this.ringRadius;
+	        planet.y = 365 + Math.sin(angle) * _this.ringRadius;
 	        angle -= .1;
-	
-	        _this.stage.update();
 	      };
 	      rotate();
 	    }
@@ -229,18 +289,15 @@
 	        var note = NOTES[i];
 	        var color = NOTE_COLORS[i];
 	
-	        var orbitRing = new OrbitRing(this.stage, radius, color);
+	        var orbitRing = new OrbitRing({
+	          stage: this.stage,
+	          radius: radius,
+	          color: color
+	        });
 	        orbitRing.draw();
 	
 	        radius += 50;
 	      }
-	    }
-	  }, {
-	    key: "drawPlanets",
-	    value: function drawPlanets() {
-	      var ringRadius = 90;
-	      var planet = new Planet(this.stage, "#ff0000");
-	      planet.draw();
 	    }
 	  }]);
 	
