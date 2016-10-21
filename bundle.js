@@ -98,6 +98,8 @@
 	    var stage = _ref.stage;
 	    var radius = _ref.radius;
 	    var color = _ref.color;
+	    var BPM = _ref.BPM;
+	    var MEASURES = _ref.MEASURES;
 	
 	    _classCallCheck(this, OrbitRing);
 	
@@ -106,6 +108,8 @@
 	    this.x = CENTER_X;
 	    this.y = CENTER_Y;
 	    this.radius = radius;
+	    this.BPM = BPM;
+	    this.MEASURES = MEASURES;
 	  }
 	
 	  _createClass(OrbitRing, [{
@@ -131,7 +135,7 @@
 	    value: function createButton() {
 	      this.button = new OrbitButton({
 	        stage: this.stage,
-	        ringRadius: this.radius,
+	        ring: this,
 	        color: this.color
 	      });
 	      this.button.draw();
@@ -144,15 +148,13 @@
 	var OrbitButton = exports.OrbitButton = function () {
 	  function OrbitButton(_ref2) {
 	    var stage = _ref2.stage;
-	    var ringRadius = _ref2.ringRadius;
+	    var ring = _ref2.ring;
 	    var color = _ref2.color;
 	
 	    _classCallCheck(this, OrbitButton);
 	
 	    this.stage = stage;
-	    this.ringX = CENTER_X;
-	    this.ringY = CENTER_Y;
-	    this.ringRadius = ringRadius;
+	    this.ring = ring;
 	    this.color = color;
 	  }
 	
@@ -170,7 +172,7 @@
 	    key: "createButton",
 	    value: function createButton() {
 	      this.buttonShape = new createjs.Shape();
-	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ringX, this.ringY + this.ringRadius, 22);
+	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 22);
 	      this.stage.addChild(this.buttonShape);
 	    }
 	  }, {
@@ -178,9 +180,7 @@
 	    value: function createPlanet() {
 	      var planet = new Planet({
 	        stage: this.stage,
-	        ringX: this.ringX,
-	        ringY: this.ringY,
-	        ringRadius: this.ringRadius,
+	        ring: this.ring,
 	        color: this.color
 	      });
 	      planet.draw();
@@ -207,17 +207,13 @@
 	var Planet = exports.Planet = function () {
 	  function Planet(_ref) {
 	    var stage = _ref.stage;
-	    var ringX = _ref.ringX;
-	    var ringY = _ref.ringY;
-	    var ringRadius = _ref.ringRadius;
+	    var ring = _ref.ring;
 	    var color = _ref.color;
 	
 	    _classCallCheck(this, Planet);
 	
 	    this.stage = stage;
-	    this.ringX = ringX;
-	    this.ringY = ringY;
-	    this.ringRadius = ringRadius;
+	    this.ring = ring;
 	    this.color = color;
 	  }
 	
@@ -229,17 +225,16 @@
 	      var planet = new createjs.Shape();
 	      planet.graphics.beginFill(this.color).drawCircle(0, 0, 7);
 	
-	      this.stage.addChild(planet);
-	
 	      var angle = 1.57;
-	      var rotate = function rotate() {
-	        requestAnimationFrame(rotate);
+	      setInterval(function () {
+	        planet.x = _this.ring.x + Math.cos(angle) * _this.ring.radius;
+	        planet.y = _this.ring.y + Math.sin(angle) * _this.ring.radius;
 	
-	        planet.x = 365 + Math.cos(angle) * _this.ringRadius;
-	        planet.y = 365 + Math.sin(angle) * _this.ringRadius;
-	        angle -= .1;
-	      };
-	      rotate();
+	        var degrees = 360 / (_this.ring.BPM / 60 * (_this.ring.MEASURES * 4)) / 60;
+	        angle -= degrees * Math.PI / 180;
+	      }, 16.66666666);
+	
+	      this.stage.addChild(planet);
 	    }
 	  }]);
 
@@ -272,6 +267,8 @@
 	
 	var NOTES = ["A", "C", "D", "E", "A2"];
 	var NOTE_COLORS = ["#ffff00", "#ff0000", "#e14c14", "#00ff00", "#3399ff"];
+	var BPM = 160;
+	var MEASURES = 1;
 	
 	var Display = exports.Display = function () {
 	  function Display(stage) {
@@ -286,11 +283,13 @@
 	      var radius = 90;
 	
 	      for (var i = 0; i < NOTES.length; i++) {
-	        var note = NOTES[i];
+	        // const note = NOTES[i];
 	        var color = NOTE_COLORS[i];
 	
 	        var orbitRing = new OrbitRing({
 	          stage: this.stage,
+	          BPM: BPM,
+	          MEASURES: MEASURES,
 	          radius: radius,
 	          color: color
 	        });
