@@ -3,16 +3,36 @@
   <head>
     <meta charset="utf-8">
     <title>Orbital</title>
-    <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
     <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
 
     <script src="./bundle.js" charset="utf-8"></script>
 
+    <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
     <link rel="stylesheet" href="display.css" type="text/css">
   </head>
   <body>
     <h1>Orbital</h1>
     <canvas id="canvas" width="730" height="730"></canvas>
+    <div id="control">
+      <form class="measures">
+        <h2>Measures:</h2>
+        <button class="selected" value="1">1</button>
+        <button value="2">2</button>
+        <button value="4">4</button>
+        <button value="8">8</button>
+      </form>
+
+      <form class="action">
+        <button id="record">Play</button>
+        <button id="reset">Reset</button>
+      </form>
+
+      <form class="tempo" action="index.html" method="post">
+        <h2>Tempo:</h2>
+        <input type="number" value="72" min="40" max="400" />
+      </form>
+    </div>
   </body>
 </html>

@@ -1,4 +1,4 @@
-h1, body, canvas {
+h1, h2, form, body, canvas, div, button, input {
   margin: 0;
     border: 0;
     outline: 0;
@@ -29,7 +29,6 @@ body {
 canvas {
   display: block;
   margin: auto auto;
-  /*background-color: #3c3c3c;*/
 }
 
 h1 {
@@ -37,4 +36,53 @@ h1 {
   text-align: center;
   font-size: 90px;
   letter-spacing: 5px;
+}
+button {
+  border-radius: 5px;
+  background-color: #ffffff;
+  padding: 5px 10px;
+}
+
+input {
+  border-radius: 5px;
+  background-color: #ffffff;
+}
+
+button.selected {
+  background-color: #e14c14;
+}
+
+#control {
+  width: 930px;
+  height: 80px;
+  background-color: #3c3c3c;
+  border-radius: 5px;
+  padding: 20px 40px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.measures button {
+
+  width: 30px;
+  margin-top: 5px;
+  font-size: 20px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+.action {
+  font-size: 40px;
+  margin-left: -60px;
+}
+
+.tempo input {
+  font-size: 20px;
+  width: 110px;
+  padding: 5px 10px;
+  margin-top: 5px;
 }
