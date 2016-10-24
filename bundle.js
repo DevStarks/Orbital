@@ -57,20 +57,11 @@
 	
 	var Display = __webpack_require__(4);
 	
-	var _require3 = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./event_listeners\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	
-	var bindEventListeners = _require3.bindEventListeners;
-	
-	
 	document.addEventListener("DOMContentLoaded", function () {
-	  var stage = new createjs.Stage("canvas");
-	  var display = new Display(stage);
+	  // const stage = new createjs.Stage("canvas");
+	  var display = new Display();
 	
 	  display.drawOrbits();
-	
-	  createjs.Ticker.addEventListener("tick", function () {
-	    return stage.update();
-	  });
 	});
 
 /***/ },
@@ -120,6 +111,7 @@
 	  _createClass(OrbitRing, [{
 	    key: 'draw',
 	    value: function draw() {
+	
 	      var ring = new createjs.Shape();
 	      ring.graphics.setStrokeStyle(2).beginStroke("DeepSkyBlue").drawCircle(this.x, this.y, this.radius);
 	      this.stage.addChild(ring);
@@ -235,6 +227,7 @@
 	      planetShape.graphics.beginFill(this.color).drawCircle(0, 0, 7);
 	
 	      var angle = 1.57;
+	      var secondsPerOrbit = 60 / this.ring.bpm * (this.ring.measures * 4);
 	      setInterval(function () {
 	        _this.handleOriginArrival(planetShape);
 	
@@ -245,8 +238,19 @@
 	
 	        angle -= degrees * Math.PI / 180;
 	      }, 16.66666666);
+	
 	      this.stage.addChild(planetShape);
 	      this.ring.addPlanet(planetShape);
+	    }
+	  }, {
+	    key: "createTransport",
+	    value: function createTransport() {
+	      var transport = Tone.Transport;
+	
+	      transport.bpm.rampTo(this.ring.bpm);
+	      transport.loop = true;
+	
+	      return transport;
 	    }
 	  }, {
 	    key: "createSynth",
@@ -264,7 +268,8 @@
 	  }, {
 	    key: "handleOriginArrival",
 	    value: function handleOriginArrival(planetShape) {
-	      if (planetShape.x > this.ring.x - 0.3 && planetShape.x < this.ring.x + 0.3 && planetShape.x > this.ring.y) {
+	
+	      if (planetShape.x > this.ring.x - 2 && planetShape.x < this.ring.x + 2 && planetShape.y > this.ring.y) {
 	        this.synth.triggerAttackRelease(this.ring.note, "8n");
 	      }
 	    }
@@ -22227,9 +22232,12 @@
 	  function Display(stage) {
 	    _classCallCheck(this, Display);
 	
-	    this.stage = stage;
+	    this.stage = new createjs.Stage("canvas");
 	    this.planets = [];
+	    this.rings = [];
 	    this.bindEventListeners();
+	    this.bpm = 72;
+	    this.measures = 1;
 	  }
 	
 	  _createClass(Display, [{
@@ -22243,21 +22251,31 @@
 	        var orbitRing = new OrbitRing({
 	          display: this,
 	          stage: this.stage,
-	          bpm: parseInt($('.tempo input').attr('value')),
-	          measures: parseInt($('.measures .selected').attr('value')),
+	          bpm: this.bpm,
+	          measures: this.measures,
 	          radius: radius,
 	          color: color,
 	          note: note
 	        });
 	        orbitRing.draw();
+	        this.rings.push(orbitRing);
 	
 	        radius += 65;
 	      }
+	      this.setTicker();
+	    }
+	  }, {
+	    key: "setTicker",
+	    value: function setTicker() {
+	      var _this = this;
+	
+	      createjs.Ticker.addEventListener("tick", function () {
+	        _this.stage.update();
+	      });
 	    }
 	  }, {
 	    key: "addPlanet",
 	    value: function addPlanet(planet) {
-	      console.log(this.planets);
 	      this.planets.push(planet);
 	    }
 	  }, {
@@ -22266,14 +22284,26 @@
 	      var display = this;
 	
 	      $('.measures').on('click', 'button', function (e) {
+	        var _this2 = this;
+	
 	        e.preventDefault();
 	        $('button.selected').toggleClass('selected');
 	        $(this).toggleClass('selected');
 	        display.measures = parseInt(this.value);
+	
+	        display.rings.forEach(function (ring) {
+	          ring.measures = parseInt(_this2.value);
+	        });
 	      });
 	
 	      $('.tempo input').on('change', function () {
-	        display.BPM = parseInt(this.value);
+	        var _this3 = this;
+	
+	        display.bpm = parseInt(this.value);
+	
+	        display.rings.forEach(function (ring) {
+	          ring.bpm = parseInt(_this3.value);
+	        });
 	      });
 	
 	      $('.action #record').on('click', function (e) {
