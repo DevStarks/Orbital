@@ -29,9 +29,11 @@ body {
 canvas {
   display: block;
   margin: auto auto;
+  height: calc(100vh - 260px);
 }
 
 h1 {
+  margin-top: 30px;
   color: DeepSkyBlue;
   text-align: center;
   font-size: 90px;
@@ -53,6 +55,9 @@ button.selected {
 }
 
 #control {
+  position: fixed;
+  bottom: 0;
+  left: calc(50% - 500px);
   width: 930px;
   height: 80px;
   background-color: #3c3c3c;

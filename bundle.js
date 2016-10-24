@@ -55,9 +55,9 @@
 	
 	var Planet = _require2.Planet;
 	
-	var Display = __webpack_require__(3);
+	var Display = __webpack_require__(4);
 	
-	var _require3 = __webpack_require__(6);
+	var _require3 = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./event_listeners\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	
 	var bindEventListeners = _require3.bindEventListeners;
 	
@@ -67,13 +67,10 @@
 	  var display = new Display(stage);
 	
 	  display.drawOrbits();
-	  // bindEventListeners();
 	
 	  createjs.Ticker.addEventListener("tick", function () {
 	    return stage.update();
 	  });
-	
-	  stage.update();
 	});
 
 /***/ },
@@ -213,7 +210,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Tone = __webpack_require__(4);
+	var Tone = __webpack_require__(3);
 	
 	var PlanetFactory = exports.PlanetFactory = function () {
 	  function PlanetFactory(_ref) {
@@ -278,106 +275,6 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _require = __webpack_require__(1);
-	
-	var OrbitRing = _require.OrbitRing;
-	var OrbitButton = _require.OrbitButton;
-	
-	var _require2 = __webpack_require__(2);
-	
-	var Planet = _require2.Planet;
-	
-	
-	var NOTES = ["A3", "E2", "D2", "C2", "A2"];
-	var NOTE_COLORS = ["#ffff00", "#ff0000", "#e14c14", "#00ff00", "#3399ff"];
-	var BPM = 120;
-	var MEASURES = 2;
-	
-	var Display = exports.Display = function () {
-	  function Display(stage) {
-	    _classCallCheck(this, Display);
-	
-	    this.stage = stage;
-	    this.planets = [];
-	    this.bindEventListeners();
-	  }
-	
-	  _createClass(Display, [{
-	    key: "drawOrbits",
-	    value: function drawOrbits() {
-	      var radius = 90;
-	
-	      for (var i = 0; i < NOTES.length; i++) {
-	        var note = NOTES[i];
-	        var color = NOTE_COLORS[i];
-	        var orbitRing = new OrbitRing({
-	          display: this,
-	          stage: this.stage,
-	          bpm: parseInt($('.tempo input').attr('value')),
-	          measures: parseInt($('.measures .selected').attr('value')),
-	          radius: radius,
-	          color: color,
-	          note: note
-	        });
-	        orbitRing.draw();
-	
-	        radius += 50;
-	      }
-	    }
-	  }, {
-	    key: "addPlanet",
-	    value: function addPlanet(planet) {
-	      console.log(this.planets);
-	      this.planets.push(planet);
-	    }
-	  }, {
-	    key: "bindEventListeners",
-	    value: function bindEventListeners() {
-	      var display = this;
-	
-	      $('.measures').on('click', 'button', function (e) {
-	        e.preventDefault();
-	        $('button.selected').toggleClass('selected');
-	        $(this).toggleClass('selected');
-	        display.measures = parseInt(this.value);
-	      });
-	
-	      $('.tempo input').on('change', function () {
-	        display.BPM = parseInt(this.value);
-	      });
-	
-	      $('.action #record').on('click', function (e) {
-	        e.preventDefault();
-	        if (this.html === 'Record') {
-	          $(this).html('Pause');
-	        } else if (this.html === 'Pause') {
-	          $(this).html('Resume');
-	        } else {
-	          $(this).html('Pause');
-	        }
-	      });
-	    }
-	  }]);
-	
-	  return Display;
-	}();
-	
-	module.exports = Display;
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
@@ -22300,20 +22197,102 @@
 	}));
 
 /***/ },
-/* 5 */,
-/* 6 */
-/***/ function(module, exports) {
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
 
-	// export const bindEventListeners = () => {
-	//   $('.measures').on('click', 'button', function(e) {
-	//
-	//     e.preventDefault();
-	//     $('button.selected').toggleClass('selected');
-	//     debugger
-	//     $(this).toggleClass('selected');
-	//   });
-	// };
 	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _require = __webpack_require__(1);
+	
+	var OrbitRing = _require.OrbitRing;
+	var OrbitButton = _require.OrbitButton;
+	
+	var _require2 = __webpack_require__(2);
+	
+	var Planet = _require2.Planet;
+	
+	
+	var NOTES = ["A3", "E2", "D2", "C2", "A2"];
+	var NOTE_COLORS = ["#ffff00", "#ff0000", "#e14c14", "#00ff00", "#3399ff"];
+	
+	var Display = exports.Display = function () {
+	  function Display(stage) {
+	    _classCallCheck(this, Display);
+	
+	    this.stage = stage;
+	    this.planets = [];
+	    this.bindEventListeners();
+	  }
+	
+	  _createClass(Display, [{
+	    key: "drawOrbits",
+	    value: function drawOrbits() {
+	      var radius = 90;
+	
+	      for (var i = 0; i < NOTES.length; i++) {
+	        var note = NOTES[i];
+	        var color = NOTE_COLORS[i];
+	        var orbitRing = new OrbitRing({
+	          display: this,
+	          stage: this.stage,
+	          bpm: parseInt($('.tempo input').attr('value')),
+	          measures: parseInt($('.measures .selected').attr('value')),
+	          radius: radius,
+	          color: color,
+	          note: note
+	        });
+	        orbitRing.draw();
+	
+	        radius += 65;
+	      }
+	    }
+	  }, {
+	    key: "addPlanet",
+	    value: function addPlanet(planet) {
+	      console.log(this.planets);
+	      this.planets.push(planet);
+	    }
+	  }, {
+	    key: "bindEventListeners",
+	    value: function bindEventListeners() {
+	      var display = this;
+	
+	      $('.measures').on('click', 'button', function (e) {
+	        e.preventDefault();
+	        $('button.selected').toggleClass('selected');
+	        $(this).toggleClass('selected');
+	        display.measures = parseInt(this.value);
+	      });
+	
+	      $('.tempo input').on('change', function () {
+	        display.BPM = parseInt(this.value);
+	      });
+	
+	      $('.action #record').on('click', function (e) {
+	        e.preventDefault();
+	        if (this.html === 'Record') {
+	          $(this).html('Pause');
+	        } else if (this.html === 'Pause') {
+	          $(this).html('Resume');
+	        } else {
+	          $(this).html('Pause');
+	        }
+	      });
+	    }
+	  }]);
+	
+	  return Display;
+	}();
+	
+	module.exports = Display;
 
 /***/ }
 /******/ ]);
