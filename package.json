@@ -10,6 +10,7 @@
     "babel-core": "^6.17.0",
     "babel-loader": "^6.2.5",
     "babel-preset-es2015": "^6.16.0",
+    "pauseable": "^0.1.6",
     "tone": "^0.8.0",
     "webpack": "^1.13.2"
   },

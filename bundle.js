@@ -46,29 +46,26 @@
 
 	"use strict";
 	
-	var _require = __webpack_require__(1);
+	var _require = __webpack_require__(4);
 	
-	var OrbitRing = _require.OrbitRing;
-	var OrbitButton = _require.OrbitButton;
+	var Display = _require.Display;
 	
-	var _require2 = __webpack_require__(2);
 	
-	var Planet = _require2.Planet;
-	
-	var Display = __webpack_require__(4);
+	var setupDisplay = function setupDisplay() {
+	  var stage = new createjs.Stage("canvas");
+	  var display = new Display(stage);
+	  display.drawOrbits();
+	};
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  // const stage = new createjs.Stage("canvas");
-	  var display = new Display();
-	
-	  display.drawOrbits();
+	  setupDisplay();
 	});
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -81,6 +78,8 @@
 	var _require = __webpack_require__(2);
 	
 	var PlanetFactory = _require.PlanetFactory;
+	
+	var pauseable = __webpack_require__(5);
 	
 	var CENTER_X = 365,
 	    CENTER_Y = 365;
@@ -106,24 +105,26 @@
 	    this.bpm = bpm;
 	    this.measures = measures;
 	    this.display = display;
+	    this.planetIntervals = pauseable.createGroup();
+	
+	    this.bindEventListeners();
 	  }
 	
 	  _createClass(OrbitRing, [{
-	    key: 'draw',
+	    key: "draw",
 	    value: function draw() {
-	
 	      var ring = new createjs.Shape();
 	      ring.graphics.setStrokeStyle(2).beginStroke("DeepSkyBlue").drawCircle(this.x, this.y, this.radius);
 	      this.stage.addChild(ring);
 	      this.createButton();
 	    }
 	  }, {
-	    key: 'addPlanet',
+	    key: "addPlanet",
 	    value: function addPlanet(planet) {
 	      this.display.addPlanet(planet);
 	    }
 	  }, {
-	    key: 'createButton',
+	    key: "createButton",
 	    value: function createButton() {
 	      this.button = new OrbitButton({
 	        stage: this.stage,
@@ -131,6 +132,25 @@
 	        color: this.color
 	      });
 	      this.button.draw();
+	    }
+	  }, {
+	    key: "bindEventListeners",
+	    value: function bindEventListeners() {
+	      var ring = this;
+	
+	      $('.measures').on('click', 'button', function (e) {
+	        e.preventDefault();
+	        $('button.selected').toggleClass('selected');
+	        $(this).toggleClass('selected');
+	
+	        ring.measures = parseInt(this.value);
+	      });
+	
+	      $('.tempo input').on('change', function (e) {
+	        e.preventDefault();
+	
+	        ring.bpm = parseInt(this.value);
+	      });
 	    }
 	  }]);
 	
@@ -152,24 +172,28 @@
 	  }
 	
 	  _createClass(OrbitButton, [{
-	    key: 'draw',
+	    key: "draw",
 	    value: function draw() {
 	      var _this = this;
 	
 	      this.createButton();
 	      this.buttonShape.on('click', function () {
 	        _this.createPlanet();
+	
+	        if ($('.action #record').html() === "Play") {
+	          $('.action #record').trigger('click');
+	        }
 	      });
 	    }
 	  }, {
-	    key: 'createButton',
+	    key: "createButton",
 	    value: function createButton() {
 	      this.buttonShape = new createjs.Shape();
 	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 22);
 	      this.stage.addChild(this.buttonShape);
 	    }
 	  }, {
-	    key: 'createPlanetFactory',
+	    key: "createPlanetFactory",
 	    value: function createPlanetFactory() {
 	      var planetFactory = new PlanetFactory({
 	        stage: this.stage,
@@ -179,9 +203,9 @@
 	      return planetFactory;
 	    }
 	  }, {
-	    key: 'createPlanet',
+	    key: "createPlanet",
 	    value: function createPlanet() {
-	      this.planetFactory.draw();
+	      this.planetFactory.createPlanet();
 	    }
 	  }]);
 
@@ -203,6 +227,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Tone = __webpack_require__(3);
+	var pauseable = __webpack_require__(5);
 	
 	var PlanetFactory = exports.PlanetFactory = function () {
 	  function PlanetFactory(_ref) {
@@ -219,16 +244,15 @@
 	  }
 	
 	  _createClass(PlanetFactory, [{
-	    key: "draw",
-	    value: function draw() {
+	    key: "createPlanet",
+	    value: function createPlanet() {
 	      var _this = this;
 	
 	      var planetShape = new createjs.Shape();
 	      planetShape.graphics.beginFill(this.color).drawCircle(0, 0, 7);
 	
 	      var angle = 1.57;
-	      var secondsPerOrbit = 60 / this.ring.bpm * (this.ring.measures * 4);
-	      setInterval(function () {
+	      var movePlanet = pauseable.setInterval(function () {
 	        _this.handleOriginArrival(planetShape);
 	
 	        planetShape.x = _this.ring.x + Math.cos(angle) * _this.ring.radius;
@@ -239,6 +263,7 @@
 	        angle -= degrees * Math.PI / 180;
 	      }, 16.66666666);
 	
+	      this.ring.planetIntervals.add(movePlanet);
 	      this.stage.addChild(planetShape);
 	      this.ring.addPlanet(planetShape);
 	    }
@@ -246,10 +271,8 @@
 	    key: "createTransport",
 	    value: function createTransport() {
 	      var transport = Tone.Transport;
-	
 	      transport.bpm.rampTo(this.ring.bpm);
 	      transport.loop = true;
-	
 	      return transport;
 	    }
 	  }, {
@@ -268,9 +291,12 @@
 	  }, {
 	    key: "handleOriginArrival",
 	    value: function handleOriginArrival(planetShape) {
+	      var _this2 = this;
 	
-	      if (planetShape.x > this.ring.x - 2 && planetShape.x < this.ring.x + 2 && planetShape.y > this.ring.y) {
-	        this.synth.triggerAttackRelease(this.ring.note, "8n");
+	      if (planetShape.x > this.ring.x - 10 && planetShape.x < this.ring.x + 5 && planetShape.y > this.ring.y) {
+	        var triggerSynth = setTimeout(function () {
+	          _this2.synth.triggerAttackRelease(_this2.ring.note, "8n");
+	        }, 20);
 	      }
 	    }
 	  }]);
@@ -22232,12 +22258,13 @@
 	  function Display(stage) {
 	    _classCallCheck(this, Display);
 	
-	    this.stage = new createjs.Stage("canvas");
+	    this.stage = stage;
 	    this.planets = [];
 	    this.rings = [];
-	    this.bindEventListeners();
 	    this.bpm = 72;
 	    this.measures = 1;
+	
+	    this.bindEventListeners();
 	  }
 	
 	  _createClass(Display, [{
@@ -22279,50 +22306,254 @@
 	      this.planets.push(planet);
 	    }
 	  }, {
+	    key: "planetIntervals",
+	    value: function planetIntervals() {
+	      return this.rings.map(function (ring) {
+	        return ring.planetIntervals;
+	      });
+	    }
+	  }, {
 	    key: "bindEventListeners",
 	    value: function bindEventListeners() {
 	      var display = this;
 	
-	      $('.measures').on('click', 'button', function (e) {
-	        var _this2 = this;
-	
-	        e.preventDefault();
-	        $('button.selected').toggleClass('selected');
-	        $(this).toggleClass('selected');
-	        display.measures = parseInt(this.value);
-	
-	        display.rings.forEach(function (ring) {
-	          ring.measures = parseInt(_this2.value);
-	        });
-	      });
-	
-	      $('.tempo input').on('change', function () {
-	        var _this3 = this;
-	
-	        display.bpm = parseInt(this.value);
-	
-	        display.rings.forEach(function (ring) {
-	          ring.bpm = parseInt(_this3.value);
-	        });
-	      });
-	
 	      $('.action #record').on('click', function (e) {
 	        e.preventDefault();
-	        if (this.html === 'Record') {
+	        if ($(this).html() === 'Play') {
 	          $(this).html('Pause');
-	        } else if (this.html === 'Pause') {
-	          $(this).html('Resume');
-	        } else {
-	          $(this).html('Pause');
+	          display.planetIntervals().forEach(function (int) {
+	            return int.resume();
+	          });
+	        } else if ($(this).html() === 'Pause') {
+	          $(this).html('Play');
+	          display.planetIntervals().forEach(function (int) {
+	            return int.pause();
+	          });
 	        }
+	      });
+	
+	      $('.action #reset').on('click', function (e) {
+	        e.preventDefault();
+	        display.stage.removeAllChildren();
+	        display.planetIntervals().forEach(function (int) {
+	          return int.clear();
+	        });
+	        display.drawOrbits();
 	      });
 	    }
 	  }]);
-	
+
 	  return Display;
 	}();
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	exports.pause = function(ee, ms) {
+	  if (ee.paused) return;
+	  ee.paused = true;
+	  if (typeof ee._bufferedEvents === 'undefined') {
+	    ee._bufferedEvents = [];
+	  }
+	  
+	  ee._oldEmit = ee.emit;
+	  ee.emit = function() {
+	    ee._bufferedEvents.push(arguments);
+	  };
 	
-	module.exports = Display;
+	  if (ms) {
+	    setTimeout(function() { exports.resume(ee); }, ms);
+	  }
+	};
+	
+	exports.resume = function(ee, ms) {
+	  if (!ee.paused) return;
+	  ee.paused = false;
+	
+	  ee.emit = ee._oldEmit;
+	  for (var i = ee._bufferedEvents.length - 1; i >= 0; i--) {
+	    ee.emit.apply(ee, ee._bufferedEvents.pop());
+	  }
+	
+	  if (ms) {
+	    setTimeout(function() { exports.pause(ee); }, ms);
+	  }
+	};
+	
+	
+	exports.createGroup = function() {
+	  var timers = [];
+	  var paused = false;
+	  var done = false;
+	
+	  return {
+	    add: function(id) {
+	      if (typeof id.emit === 'undefined') {
+	        id.onDone(function() {
+	          timers.splice(timers.indexOf(id), 1);
+	          if (timers.length === 0) {
+	            done = true;
+	          }
+	        });
+	      }
+	
+	      timers.push(id);
+	      return id;
+	    },
+	
+	    setTimeout: function(fn, ms) {
+	      return this.add(exports.setTimeout(fn, ms));
+	    },
+	
+	    setInterval: function(fn, ms) {
+	      return this.add(exports.setInterval(fn, ms));
+	    },
+	
+	    pause: function(resumeIn) {
+	      for (var i = 0; i < timers.length; i++) {
+	        var id = timers[i];
+	        if (typeof id.emit === 'function') {
+	          exports.pause(id, resumeIn);
+	        } else {
+	          id.pause(resumeIn);
+	        }
+	      }
+	      paused = true;
+	    },
+	
+	    resume: function(pauseIn) {
+	      for (var i = 0; i < timers.length; i++) {
+	        var id = timers[i];
+	        if (typeof id.emit === 'function') {
+	          exports.resume(id, pauseIn);
+	        } else {
+	          id.resume(pauseIn);
+	        }
+	      }
+	      paused = false;
+	    },
+	
+	    clear: function() {
+	      for (var i = timers.length - 1; i >= 0; i--) {
+	        if (typeof timers[i].clear === 'function') {
+	          timers[i].clear();
+	        }
+	      }
+	    },
+	
+	    isPaused: function() {
+	      return paused;
+	    },
+	
+	    isDone: function() {
+	      return done;
+	    },
+	  
+	    timers: function() {
+	      return timers;
+	    }
+	  };
+	};
+	
+	var timer = function(type, clear, fn, ms) {
+	  // allow fn and ms arguments to be switchabale
+	  // let the user decide the syntax
+	  if (typeof fn !== 'function') {
+	    var tmp = fn;
+	    fn = ms;
+	    ms = tmp;
+	  }
+	
+	  var done = false;
+	  var countdownStart = Date.now();
+	  var nextTime = ms;
+	  var paused;
+	  var finished;
+	  var resumed;
+	
+	  var wrapper = function() {
+	    countdownStart = Date.now();
+	    nextTime = ms;
+	    fn.apply();
+	    if (type === setTimeout) {
+	      done = true;
+	      if (typeof finished === 'function') {
+	        finished.apply();
+	      }
+	    } else if (resumed) {
+	      resumed = false;
+	      id = setInterval(wrapper, ms);
+	    }
+	  };
+	
+	  var id = type(wrapper, ms);
+	
+	  return {
+	    pause: function(resumeIn) {
+	      if (done || paused) return;
+	      clear(id);
+	      paused = true;
+	      if (resumeIn) {
+	        setTimeout(this.resume, resumeIn);
+	      }
+	      return nextTime -= Date.now() - countdownStart;
+	    },
+	
+	    resume: function(pauseIn) {
+	      if (done || !paused) return;
+	      paused = false;
+	      resumed = true;
+	      countdownStart = Date.now();
+	      if (pauseIn) {
+	        setTimeout(this.pause, pauseIn);
+	      }
+	
+	      // calling setTimeout here and not type because
+	      // calling setInterval with the remaining time will continue to
+	      // call setInterval with that lessened time
+	      id = setTimeout(wrapper, nextTime);
+	    },
+	
+	    next: function() {
+	      return nextTime - (paused ? 0 : Date.now() - countdownStart);
+	    },
+	
+	    clear: function() {
+	      if (done) return;
+	      if (resumed) {
+	        clearTimeout(id);
+	      } else {
+	        clear(id);
+	      }
+	      done = true;
+	      if (typeof finished === 'function') {
+	        finished.apply();
+	      }
+	    },
+	
+	    isPaused: function() {
+	      return paused;
+	    },
+	
+	    isDone: function() {
+	      return done;
+	    },
+	
+	    onDone: function(fn) {
+	      finished = fn;
+	    }
+	  };
+	};
+	
+	exports.setTimeout = function(fn, ms) {
+	  return timer(setTimeout, clearTimeout, fn, ms);
+	};
+	
+	exports.setInterval = function(fn, ms) {
+	  return timer(setInterval, clearInterval, fn, ms);
+	};
+
 
 /***/ }
 /******/ ]);
