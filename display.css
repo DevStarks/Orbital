@@ -29,7 +29,7 @@ body {
 canvas {
   display: block;
   margin: auto auto;
-  height: calc(100vh - 260px);
+  height: calc(100vh - 270px);
 }
 
 h1 {
@@ -82,8 +82,15 @@ h2 {
 
 .action {
   font-size: 40px;
-  margin-left: -60px;
+  margin-right: 93px;
 }
+
+.action button {
+  width: 155px;
+  text-align: center;
+}
+
+
 
 .tempo input {
   font-size: 20px;

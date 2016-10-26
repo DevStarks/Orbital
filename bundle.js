@@ -46,7 +46,7 @@
 
 	"use strict";
 	
-	var _require = __webpack_require__(4);
+	var _require = __webpack_require__(1);
 	
 	var Display = _require.Display;
 	
@@ -58,6 +58,7 @@
 	};
 	
 	document.addEventListener("DOMContentLoaded", function () {
+	
 	  setupDisplay();
 	});
 
@@ -76,6 +77,125 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var _require = __webpack_require__(2);
+	
+	var OrbitRing = _require.OrbitRing;
+	var OrbitButton = _require.OrbitButton;
+	
+	var _require2 = __webpack_require__(3);
+	
+	var Planet = _require2.Planet;
+	
+	
+	var NOTES = ["A3", "E2", "D2", "C2", "A2"];
+	var NOTE_COLORS = ["#ffff00", "#ff0000", "#e14c14", "#00ff00", "#3399ff"];
+	
+	var Display = exports.Display = function () {
+	  function Display(stage) {
+	    _classCallCheck(this, Display);
+	
+	    this.stage = stage;
+	    this.planets = [];
+	    this.rings = [];
+	    this.bpm = 72;
+	    this.measures = 1;
+	
+	    this.bindEventListeners();
+	  }
+	
+	  _createClass(Display, [{
+	    key: "drawOrbits",
+	    value: function drawOrbits() {
+	      var radius = 80;
+	
+	      for (var i = 0; i < NOTES.length; i++) {
+	        var note = NOTES[i];
+	        var color = NOTE_COLORS[i];
+	        var orbitRing = new OrbitRing({
+	          display: this,
+	          stage: this.stage,
+	          bpm: this.bpm,
+	          measures: this.measures,
+	          radius: radius,
+	          color: color,
+	          note: note
+	        });
+	        orbitRing.draw();
+	        this.rings.push(orbitRing);
+	
+	        radius += 55;
+	      }
+	      this.setTicker();
+	    }
+	  }, {
+	    key: "setTicker",
+	    value: function setTicker() {
+	      var _this = this;
+	
+	      createjs.Ticker.addEventListener("tick", function () {
+	        _this.stage.update();
+	      });
+	    }
+	  }, {
+	    key: "addPlanet",
+	    value: function addPlanet(planet) {
+	      this.planets.push(planet);
+	    }
+	  }, {
+	    key: "planetIntervals",
+	    value: function planetIntervals() {
+	      return this.rings.map(function (ring) {
+	        return ring.planetIntervals;
+	      });
+	    }
+	  }, {
+	    key: "bindEventListeners",
+	    value: function bindEventListeners() {
+	      var display = this;
+	
+	      $('.action #record').on('click', function (e) {
+	        e.preventDefault();
+	        if ($(this).html() === 'Play') {
+	          $(this).html('Pause');
+	          display.planetIntervals().forEach(function (int) {
+	            return int.resume();
+	          });
+	        } else if ($(this).html() === 'Pause') {
+	          $(this).html('Play');
+	          display.planetIntervals().forEach(function (int) {
+	            return int.pause();
+	          });
+	        }
+	      });
+	
+	      $('.action #reset').on('click', function (e) {
+	        e.preventDefault();
+	        display.stage.removeAllChildren();
+	        display.planetIntervals().forEach(function (int) {
+	          return int.clear();
+	        });
+	        display.drawOrbits();
+	      });
+	    }
+	  }]);
+
+	  return Display;
+	}();
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var _require = __webpack_require__(3);
 	
 	var PlanetFactory = _require.PlanetFactory;
 	
@@ -213,7 +333,7 @@
 	}();
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -226,7 +346,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Tone = __webpack_require__(3);
+	var Tone = __webpack_require__(4);
 	var pauseable = __webpack_require__(5);
 	
 	var PlanetFactory = exports.PlanetFactory = function () {
@@ -305,7 +425,7 @@
 	}();
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;(function(root, factory){
@@ -22226,125 +22346,6 @@
 		
 		return Tone;
 	}));
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var _require = __webpack_require__(1);
-	
-	var OrbitRing = _require.OrbitRing;
-	var OrbitButton = _require.OrbitButton;
-	
-	var _require2 = __webpack_require__(2);
-	
-	var Planet = _require2.Planet;
-	
-	
-	var NOTES = ["A3", "E2", "D2", "C2", "A2"];
-	var NOTE_COLORS = ["#ffff00", "#ff0000", "#e14c14", "#00ff00", "#3399ff"];
-	
-	var Display = exports.Display = function () {
-	  function Display(stage) {
-	    _classCallCheck(this, Display);
-	
-	    this.stage = stage;
-	    this.planets = [];
-	    this.rings = [];
-	    this.bpm = 72;
-	    this.measures = 1;
-	
-	    this.bindEventListeners();
-	  }
-	
-	  _createClass(Display, [{
-	    key: "drawOrbits",
-	    value: function drawOrbits() {
-	      var radius = 90;
-	
-	      for (var i = 0; i < NOTES.length; i++) {
-	        var note = NOTES[i];
-	        var color = NOTE_COLORS[i];
-	        var orbitRing = new OrbitRing({
-	          display: this,
-	          stage: this.stage,
-	          bpm: this.bpm,
-	          measures: this.measures,
-	          radius: radius,
-	          color: color,
-	          note: note
-	        });
-	        orbitRing.draw();
-	        this.rings.push(orbitRing);
-	
-	        radius += 65;
-	      }
-	      this.setTicker();
-	    }
-	  }, {
-	    key: "setTicker",
-	    value: function setTicker() {
-	      var _this = this;
-	
-	      createjs.Ticker.addEventListener("tick", function () {
-	        _this.stage.update();
-	      });
-	    }
-	  }, {
-	    key: "addPlanet",
-	    value: function addPlanet(planet) {
-	      this.planets.push(planet);
-	    }
-	  }, {
-	    key: "planetIntervals",
-	    value: function planetIntervals() {
-	      return this.rings.map(function (ring) {
-	        return ring.planetIntervals;
-	      });
-	    }
-	  }, {
-	    key: "bindEventListeners",
-	    value: function bindEventListeners() {
-	      var display = this;
-	
-	      $('.action #record').on('click', function (e) {
-	        e.preventDefault();
-	        if ($(this).html() === 'Play') {
-	          $(this).html('Pause');
-	          display.planetIntervals().forEach(function (int) {
-	            return int.resume();
-	          });
-	        } else if ($(this).html() === 'Pause') {
-	          $(this).html('Play');
-	          display.planetIntervals().forEach(function (int) {
-	            return int.pause();
-	          });
-	        }
-	      });
-	
-	      $('.action #reset').on('click', function (e) {
-	        e.preventDefault();
-	        display.stage.removeAllChildren();
-	        display.planetIntervals().forEach(function (int) {
-	          return int.clear();
-	        });
-	        display.drawOrbits();
-	      });
-	    }
-	  }]);
-
-	  return Display;
-	}();
 
 /***/ },
 /* 5 */
