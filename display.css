@@ -39,15 +39,14 @@ h1 {
   font-size: 90px;
   letter-spacing: 5px;
 }
-button {
-  border-radius: 5px;
-  background-color: #ffffff;
-  padding: 5px 10px;
-}
 
-input {
+button, input {
   border-radius: 5px;
   background-color: #ffffff;
+}
+button {
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
 button.selected {
@@ -70,7 +69,6 @@ button.selected {
 }
 
 .measures button {
-
   width: 30px;
   margin-top: 5px;
   font-size: 20px;

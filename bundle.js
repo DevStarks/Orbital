@@ -294,23 +294,14 @@
 	  _createClass(OrbitButton, [{
 	    key: "draw",
 	    value: function draw() {
-	      var _this = this;
-	
-	      this.createButton();
-	      this.buttonShape.on('click', function () {
-	        _this.createPlanet();
-	
-	        if ($('.action #record').html() === "Play") {
-	          $('.action #record').trigger('click');
-	        }
-	      });
-	    }
-	  }, {
-	    key: "createButton",
-	    value: function createButton() {
 	      this.buttonShape = new createjs.Shape();
 	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 22);
 	      this.stage.addChild(this.buttonShape);
+	
+	      this.bindEventListeners();
+	
+	      this.stage.enableMouseOver(10);
+	      this.buttonShape.cursor = "pointer";
 	    }
 	  }, {
 	    key: "createPlanetFactory",
@@ -326,6 +317,19 @@
 	    key: "createPlanet",
 	    value: function createPlanet() {
 	      this.planetFactory.createPlanet();
+	    }
+	  }, {
+	    key: "bindEventListeners",
+	    value: function bindEventListeners() {
+	      var _this = this;
+	
+	      this.buttonShape.on('click', function () {
+	        _this.createPlanet();
+	
+	        if ($('.action #record').html() === "Play") {
+	          $('.action #record').trigger('click');
+	        }
+	      });
 	    }
 	  }]);
 
