@@ -288,7 +288,6 @@
 	    this.stage = stage;
 	    this.ring = ring;
 	    this.color = color;
-	    this.planetFactory = this.createPlanetFactory();
 	  }
 	
 	  _createClass(OrbitButton, [{
@@ -309,14 +308,31 @@
 	      var planetFactory = new PlanetFactory({
 	        stage: this.stage,
 	        ring: this.ring,
-	        color: this.color
+	        color: this.color,
+	        button: this
 	      });
 	      return planetFactory;
 	    }
 	  }, {
 	    key: "createPlanet",
 	    value: function createPlanet() {
+	      if (!this.planetFactory) {
+	        this.planetFactory = this.createPlanetFactory();
+	      }
 	      this.planetFactory.createPlanet();
+	    }
+	  }, {
+	    key: "expand",
+	    value: function expand() {
+	      this.buttonShape.graphics.clear().beginFill(this.color).beginStroke("black").setStrokeStyle(1).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 24);
+	
+	      this.stage.addChild(this.buttonShape);
+	    }
+	  }, {
+	    key: "setOrigShape",
+	    value: function setOrigShape() {
+	      this.buttonShape.graphics.clear().beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 22);
+	      this.stage.addChild(this.buttonShape);
 	    }
 	  }, {
 	    key: "bindEventListeners",
@@ -329,6 +345,15 @@
 	        if ($('.action #record').html() === "Play") {
 	          $('.action #record').trigger('click');
 	        }
+	      });
+	
+	      var button = this;
+	      this.buttonShape.on('mouseover', function () {
+	        _this.expand();
+	      });
+	
+	      this.buttonShape.on('mouseout', function () {
+	        _this.setOrigShape();
 	      });
 	    }
 	  }]);
@@ -358,12 +383,14 @@
 	    var stage = _ref.stage;
 	    var ring = _ref.ring;
 	    var color = _ref.color;
+	    var button = _ref.button;
 	
 	    _classCallCheck(this, PlanetFactory);
 	
 	    this.stage = stage;
 	    this.ring = ring;
 	    this.color = color;
+	    this.button = button;
 	    this.synth = this.createSynth();
 	  }
 	
@@ -392,14 +419,6 @@
 	      this.ring.addPlanet(planetShape);
 	    }
 	  }, {
-	    key: "createTransport",
-	    value: function createTransport() {
-	      var transport = Tone.Transport;
-	      transport.bpm.rampTo(this.ring.bpm);
-	      transport.loop = true;
-	      return transport;
-	    }
-	  }, {
 	    key: "createSynth",
 	    value: function createSynth() {
 	      var synth = new Tone.MonoSynth({
@@ -418,9 +437,19 @@
 	      var _this2 = this;
 	
 	      if (planetShape.x > this.ring.x - 10 && planetShape.x < this.ring.x + 5 && planetShape.y > this.ring.y) {
-	        var triggerSynth = setTimeout(function () {
-	          _this2.synth.triggerAttackRelease(_this2.ring.note, "8n");
-	        }, 20);
+	        (function () {
+	          var triggerSynth = setTimeout(function () {
+	            _this2.synth.triggerAttackRelease(_this2.ring.note, '8n');
+	          }, 5);
+	
+	          var triggerButtonExpand = setTimeout(function () {
+	            clearTimeout(triggerButtonExpand);
+	            _this2.button.expand();
+	            setTimeout(function () {
+	              return _this2.button.setOrigShape();
+	            }, 100);
+	          });
+	        })();
 	      }
 	    }
 	  }]);
