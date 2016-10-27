@@ -58,7 +58,6 @@
 	};
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	
 	  setupDisplay();
 	});
 
@@ -294,11 +293,8 @@
 	    key: "draw",
 	    value: function draw() {
 	      this.buttonShape = new createjs.Shape();
-	      this.buttonShape.graphics.beginFill(this.color).beginStroke("black").setStrokeStyle(2).drawCircle(this.ring.x, this.ring.y + this.ring.radius, 22);
-	      this.stage.addChild(this.buttonShape);
-	
+	      this.setOrigShape();
 	      this.bindEventListeners();
-	
 	      this.stage.enableMouseOver(10);
 	      this.buttonShape.cursor = "pointer";
 	    }

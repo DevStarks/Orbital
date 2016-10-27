@@ -1,71 +1,58 @@
 ## Orbital
 
-### About
+Orbital is a solar-system inspired musical instrument for the browser. It works by looping 1, 2, 4, or 8 measures and placing new notes, represented by planets, in orbit as the user inputs them. Each tone has its own orbital path and triggers a synth sound when it reaches its point of origin.
 
-Orbital is a solar-system inspired musical instrument for the browser. It works by looping 2, 4, or 8 measures and placing new notes, represented by planets, in orbit as the user inputs them. Each tone has its own orbital path and triggers a synth sound when it reaches its point of origin.
+[Checkout the live version here!](http://www.devinstarks.com/Orbital)
 
-### Functionality & MVP  
 
-Orbital will allow users to:
+![sign-up](./docs/screenshots/sign-up.jpg)
+
+### Features
 
 - Start, pause, and reset the orbit looper
 - Select unlimited notes to add to the looper
-- Toggle the arpeggiator to play notes of their choice
-- Change the number of measures in the loop and the loop tempo
+<!-- - Toggle the arpeggiator to place a constant stream of planets into orbit in a selectable pattern -->
+- Adjustable tempo and number of measures
 
-In addition, this project will include:
+### Technology Used
 
-- A production README
-- Links to my LinkedIn and Github
+- JavaScript
+- Tone.js
+- EaselJS
 
-### Wireframes
+## Main Feature Implementation
 
-This app will consist of a single screen with a looper visualization, an options panel, nav links to the Github and my LinkedIn.  Looper controls will include a number-of-bars options input, a tempo selector input, Pause/Play and Reset buttons, and an input for tempo.
+### Measure and tempo based orbit speed
 
-![wireframes](./docs/orbital.jpg)
+Each planet orbits at a speed determined by two inputs, number of measures and tempo.
+To achieve uniform revolution time for planets on orbits of different sizes I wrote an algorithm
+that calculates the change of angle per frame given the two inputs. This angle determines the next coordinate along the orbit. The new location is calculated repeatedly at a 1/60 second interval allowing the planet constant movement along its respective orbit.
 
-### Architecture and Technologies
+```javascript
+let angle = 0;
+setInterval(() => {
+  planetShape.x = this.ring.x + Math.cos(angle) * this.ring.radius;
+  planetShape.y = this.ring.y + Math.sin(angle) * this.ring.radius;
 
-This project will be implemented with the following technologies:
+  const degrees = (
+    360 / ((60 / this.ring.bpm) * (this.ring.measures * 4)) / 60
+  );
+  const radians = degrees * Math.PI / 180;
 
-- JavaScript and `jQuery` for triggering of notes
-- `HTML5 Canvas` and `Easel.js` for DOM manipulation and rendering
-- `Tone.js` for synthesizer sounds
-- Webpack to bundle and serve up the various scripts.
+  angle -= radians;
+}, 16.66666666);
+```
 
-In addition to the webpack entry file, there will be three scripts involved in this project:
+### Visually driven note triggering
 
-`display.js`: this script will handle the logic for creating and updating the necessary `Canvas` elements and rendering them to the DOM.
+Because the frame rate in the browser is metronomically imperfect, it was necessary to trigger the synthesizer based on planet coordinates as opposed to at a pre-determined interval. This ensures that the visualization and the audio maintain synchronicity.
 
-`synth.js`: this script will handle the logic for tone creation.
-
-`looper.js`: this script will handle the triggering of notes and the syncing of the display.
-
-### Implementation Timeline
-
-**Day 1**: Setup all necessary Node modules, including getting webpack up and running.  Create `webpack.config.js` as well as `package.json`.  Write a basic entry file and the bare bones of all 3 scripts outlined above.  Learn the basics of `Easel.js` and `Tone.js`. Get the display rendered on the page and begin working on correctly orbiting orbs. Goals for the day:
-
-- Get a green bundle with `webpack`
-- Learn enough `Easel.js` to render an object to the `Canvas` element
-- Learn enough `Tone.js` to trigger a sound on the browser
-- Create renderable `ring` and `orb` objects
-- Render the display and get at least one orb rotating correctly on its ring
-
-**Day 2**: Finish logic for rotating orbs. Make sure that all rings have a correctly revolving orb and can add orbs to the orbit when clicked. Get orbs to trigger notes when they reach the 'home' point in their revolution. Goals for the day:
-
-- Complete the `ring` and `orb` objects
-- `orb` rotating speed should be based on tempo and number of bars
-- Assign notes to each ring
-- Give each ring a clickable button that adds another orb to orbit
-
-**Day 3**: Add pause/play functionality. Allow `orb` objects to snap to the closest even part of the bar. Debug. Goals for the day:
-
-- Pause looper by stopping orbs from moving
-- Create algorithm for finding and snapping orbs to the closest even part of the bar
-
-
-### Bonus features
-
-- Arpeggiator
-- Add options for synth sounds
-- Add option for more note choices
+```javascript
+handleOriginArrival(planetShape) {
+  if (planetShape.x > this.ring.x - 10 &&
+      planetShape.x < this.ring.x + 5 &&
+      planetShape.y > this.ring.y) {
+    this.synth.triggerAttackRelease(this.ring.note, '8n');
+  }
+}
+```
