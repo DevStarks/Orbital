@@ -5,18 +5,19 @@ Orbital is a solar-system inspired musical instrument for the browser. It works 
 [Checkout the live version here!](http://www.devinstarks.com/Orbital)
 
 
-![sign-up](./docs/screenshots/sign-up.jpg)
+![sign-up](./docs/screenshots/orbital.png)
 
 ### Features
 
 - Start, pause, and reset the orbit looper
-- Select unlimited notes to add to the looper
+- Send unlimited planets into orbit
 <!-- - Toggle the arpeggiator to place a constant stream of planets into orbit in a selectable pattern -->
 - Adjustable tempo and number of measures
 
 ### Technology Used
 
 - JavaScript
+- jQuery
 - Tone.js
 - EaselJS
 
@@ -56,3 +57,15 @@ handleOriginArrival(planetShape) {
   }
 }
 ```
+
+## Future Plans for this Project
+
+### Arpeggiator
+
+The user will be able to toggle an arpeggiator which sends a constant stream of planets into orbit. The arpeggiator will have a pattern selector that determines the order that the notes are triggered in.
+
+### Metronome
+
+There will be a toggle-able visual and audible metronome to make it easier for the user to input notes in rhythm.
+
+[Original Design Docs](./docs/DEV_README.md)
