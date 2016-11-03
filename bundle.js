@@ -443,21 +443,19 @@
 	    value: function handleOriginArrival(planetShape) {
 	      var _this2 = this;
 	
-	      if (planetShape.x > this.ring.x - 20 && planetShape.x < this.ring.x + 30 && planetShape.y > this.ring.y) {
-	        (function () {
-	          var triggerSynth = setTimeout(function () {
-	            clearTimeout(triggerSynth);
-	            _this2.synth.triggerAttackRelease(_this2.ring.note, '8n');
-	          }, 150);
+	      if (planetShape.x > this.ring.x - 30 && planetShape.x < this.ring.x + 15 && planetShape.y > this.ring.y) {
+	        clearTimeout(this.triggerSynth);
+	        this.triggerSynth = setTimeout(function () {
+	          _this2.synth.triggerAttackRelease(_this2.ring.note, '8n');
+	        }, 50);
 	
-	          var triggerButtonExpand = setTimeout(function () {
-	            clearTimeout(triggerButtonExpand);
-	            _this2.button.expand();
-	            setTimeout(function () {
-	              return _this2.button.setOrigShape();
-	            }, 150);
-	          });
-	        })();
+	        clearTimeout(this.triggerButtonExpand);
+	        this.triggerButtonExpand = setTimeout(function () {
+	          _this2.button.expand();
+	          setTimeout(function () {
+	            return _this2.button.setOrigShape();
+	          }, 150);
+	        }, 50);
 	      }
 	    }
 	  }]);
