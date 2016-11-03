@@ -266,15 +266,19 @@
 	      });
 	
 	      $('.tempo input').on('change', function (e) {
-	        e.preventDefault();
-	
+	        if (this.value > 350) {
+	          this.value = 350;
+	        }
 	        ring.bpm = parseInt(this.value);
 	      });
 	
 	      $('.tempo input').on('keypress', function (e) {
 	        if (e.keyCode === 13) {
-	          ring.bpm = parseInt(this.value);
 	          e.preventDefault();
+	          if (this.value > 350) {
+	            this.value = 350;
+	          }
+	          ring.bpm = parseInt(this.value);
 	        }
 	      });
 	    }
@@ -403,14 +407,14 @@
 	      var _this = this;
 	
 	      var planetShape = new createjs.Shape();
-	      planetShape.graphics.beginFill(this.color).drawCircle(0, 0, 7);
+	      planetShape.graphics.beginFill(this.color).drawCircle(-10, -10, 7);
 	
 	      var angle = 1.57;
 	      var movePlanet = pauseable.setInterval(function () {
 	        _this.handleOriginArrival(planetShape);
 	
-	        planetShape.x = _this.ring.x + Math.cos(angle) * _this.ring.radius;
-	        planetShape.y = _this.ring.y + Math.sin(angle) * _this.ring.radius;
+	        planetShape.x = _this.ring.x + Math.cos(angle) * _this.ring.radius + 10;
+	        planetShape.y = _this.ring.y + Math.sin(angle) * _this.ring.radius + 10;
 	
 	        var degrees = 360 / (60 / _this.ring.bpm * (_this.ring.measures * 4)) / 60;
 	
@@ -442,15 +446,16 @@
 	      if (planetShape.x > this.ring.x - 20 && planetShape.x < this.ring.x + 30 && planetShape.y > this.ring.y) {
 	        (function () {
 	          var triggerSynth = setTimeout(function () {
+	            clearTimeout(triggerSynth);
 	            _this2.synth.triggerAttackRelease(_this2.ring.note, '8n');
-	          }, 5);
+	          }, 150);
 	
 	          var triggerButtonExpand = setTimeout(function () {
 	            clearTimeout(triggerButtonExpand);
 	            _this2.button.expand();
 	            setTimeout(function () {
 	              return _this2.button.setOrigShape();
-	            }, 100);
+	            }, 150);
 	          });
 	        })();
 	      }

@@ -13,26 +13,32 @@
     <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet">
   </head>
   <body>
-    <h1>Orbital</h1>
-    <canvas id="canvas" width="730" height="730"></canvas>
-    <div id="control">
-      <form class="measures">
-        <h2>Measures:</h2>
-        <button class="selected" value="1">1</button>
-        <button value="2">2</button>
-        <button value="4">4</button>
-        <button value="8">8</button>
-      </form>
+    <main>
+      <h1>Orbital</h1>
+      <canvas id="canvas" width="730" height="730"></canvas>
+      <div id="control">
+        <form class="measures">
+          <h2>Measures:</h2>
+          <button class="selected" value="1">1</button>
+          <button value="2">2</button>
+          <button value="4">4</button>
+          <button value="8">8</button>
+        </form>
 
-      <form class="action">
-        <button id="record">Play</button>
-        <button id="reset">Reset</button>
-      </form>
+        <form class="action">
+          <button id="record">Play</button>
+          <button id="reset">Reset</button>
+        </form>
 
-      <form class="tempo" action="index.html" method="post">
-        <h2>Tempo:</h2>
-        <input type="number" value="72" min="40" max="400" />
-      </form>
-    </div>
+        <form class="tempo" action="index.html" method="post">
+          <h2>Tempo:</h2>
+          <input type="number" value="72" min="40" max="350" />
+        </form>
+      </div>
+    </main>
+
+    <aside>
+      
+    </aside>
   </body>
 </html>
