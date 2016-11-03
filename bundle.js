@@ -270,6 +270,13 @@
 	
 	        ring.bpm = parseInt(this.value);
 	      });
+	
+	      $('.tempo input').on('keypress', function (e) {
+	        if (e.keyCode === 13) {
+	          ring.bpm = parseInt(this.value);
+	          e.preventDefault();
+	        }
+	      });
 	    }
 	  }]);
 	
@@ -432,7 +439,7 @@
 	    value: function handleOriginArrival(planetShape) {
 	      var _this2 = this;
 	
-	      if (planetShape.x > this.ring.x - 10 && planetShape.x < this.ring.x + 5 && planetShape.y > this.ring.y) {
+	      if (planetShape.x > this.ring.x - 20 && planetShape.x < this.ring.x + 30 && planetShape.y > this.ring.y) {
 	        (function () {
 	          var triggerSynth = setTimeout(function () {
 	            _this2.synth.triggerAttackRelease(_this2.ring.note, '8n');
